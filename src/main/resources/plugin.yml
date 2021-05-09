@@ -1,0 +1,13 @@
+name: Storage
+version: ${project.version}
+main: masa3mc.storage.Storage
+api-version: 1.16
+softdepend: [Vault]
+depend: [Vault]
+commands:
+  storage:
+    usage: /storage
+    description: Open Storage GUI
+  addstorage:
+    usage: /addstorage
+    description: add Storage item
