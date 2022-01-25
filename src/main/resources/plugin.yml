@@ -11,3 +11,6 @@ commands:
   addstorage:
     usage: /addstorage
     description: add Storage item
+  locstorage:
+    usage: /locstorage
+    description: chencge

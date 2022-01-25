@@ -88,7 +88,7 @@ public class GUI {
                 }
                 ItemStack itemStack = new ItemStack(Material.valueOf(item));
                 ItemMeta meta = itemStack.getItemMeta();
-                meta.setDisplayName("§6" + item);
+                meta.setDisplayName("§7No."+ number + "-§6" + item);
                 ArrayList<String> list = new ArrayList<String>();
                 list.add("§7Storage capacity");
                 int items = c.getInt("Storage." + item);
@@ -163,10 +163,7 @@ public class GUI {
         backmeta.setDisplayName("§c戻る");
         back.setItemMeta(backmeta);
 
-        ItemStack change = new ItemStack(Material.ORANGE_CONCRETE);
-        ItemMeta changemeta = change.getItemMeta();
-        changemeta.setDisplayName("§6並び替え");
-        change.setItemMeta(changemeta);
+
 
         if(c.getInt("Storage." + item) > 63){
             ItemStack item4 = new ItemStack(Material.LIGHT_BLUE_CONCRETE);
@@ -184,13 +181,11 @@ public class GUI {
             inv.setItem(13, item1);
             inv.setItem(15, item4);
             inv.setItem(16, item5);
-            inv.setItem(18,change);
             inv.setItem(26, back);
         }else {
             inv.setItem(10, item2);
             inv.setItem(11, item3);
             inv.setItem(13, item1);
-            inv.setItem(18,change);
             inv.setItem(26, back);
         }
 
