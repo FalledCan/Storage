@@ -8,9 +8,18 @@ commands:
   storage:
     usage: /storage
     description: Open Storage GUI
+  st:
+    usage: /st
+    description: Open Storage GUI
   addstorage:
     usage: /addstorage
     description: add Storage item
+  ast:
+    usage: /ast
+    description: add Storage item
   locstorage:
     usage: /locstorage
+    description: chencge
+  lst:
+    usage: /lst
     description: chencge

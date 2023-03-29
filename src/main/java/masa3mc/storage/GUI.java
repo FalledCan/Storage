@@ -158,6 +158,11 @@ public class GUI {
         meta3.setDisplayName("§61stack保存する");
         item3.setItemMeta(meta3);
 
+        ItemStack toggle = new ItemStack(Material.HOPPER);
+        ItemMeta togglem = toggle.getItemMeta();
+        togglem.setDisplayName("§6アイテム自動回収");
+        toggle.setItemMeta(togglem);
+
         ItemStack back = new ItemStack(Material.RED_CONCRETE);
         ItemMeta backmeta = back.getItemMeta();
         backmeta.setDisplayName("§c戻る");
@@ -188,7 +193,7 @@ public class GUI {
             inv.setItem(13, item1);
             inv.setItem(26, back);
         }
-
+        inv.setItem(8, toggle);
         player.openInventory(inv);
     }
 

@@ -1,16 +1,22 @@
 package masa3mc.storage;
 
 import org.bukkit.Material;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Listeners implements Listener {
 
@@ -63,6 +69,56 @@ public class Listeners implements Listener {
 
     }
 
+    public static HashMap<String,Integer> hopper = new HashMap<>();
+    public static ArrayList<String> hopperl = new ArrayList<>();
+
+    @EventHandler
+    public void onHopper(EntityPickupItemEvent event){
+        if(event.getEntity() instanceof Player){
+            Player player = ((Player) event.getEntity()).getPlayer();
+
+            if(player.hasPermission("sub.large") || player.hasPermission("sub.small")) {
+                String item = event.getItem().getItemStack().getType().name();
+                String hoppername = player.getName() + item;
+                if(hopper.get(hoppername) != null){
+                    hopper.put(hoppername, hopper.get(hoppername) + event.getItem().getItemStack().getAmount());
+                    event.setCancelled(true);
+                    event.getItem().remove();
+                    if(hopper.get(hoppername) > 63){
+                        File f = new File(Storage.getPlugin().getDataFolder(),"/Storages/" + player.getUniqueId() + ".yml");
+                        FileConfiguration c = YamlConfiguration.loadConfiguration(f);
+                        c.set("Storage." + item,c.getInt("Storage." + item) + hopper.get(hoppername));
+                        hopper.put(hoppername,0);
+                        try {
+                            c.save(f);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event){
+        Player player = event.getPlayer();
+
+        for(String s: hopperl){
+            String item = s.replace(player.getName(),"");
+            File f = new File(Storage.getPlugin().getDataFolder(),"/Storages/" + player.getUniqueId() + ".yml");
+            FileConfiguration c = YamlConfiguration.loadConfiguration(f);
+            c.set("Storage." + item,c.getInt("Storage." + item) + hopper.get(player.getName() +item));
+            try {
+                c.save(f);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            hopperl.remove(s);
+            hopper.remove(s);
+        }
+    }
+
     @EventHandler
     public void ClickEventStoregeItems(InventoryClickEvent event){
 
@@ -79,7 +135,31 @@ public class Listeners implements Listener {
             ItemStack itemStack = player.getOpenInventory().getItem(13);
             String item = itemStack.getType().name();
             GUI gui = new GUI();
-            if(raw == 10){
+            if(raw == 8){
+              if(player.hasPermission("sub.large") || player.hasPermission("sub.small")){
+                  String hpi = player.getName() + item;
+                  if(hopper.get(hpi) == null){
+                      hopperl.add(hpi);
+                      hopper.put(hpi, 0);
+                      System.out.println(hpi);
+                      player.sendMessage("§6[§7Storege§6] §b自動回収機能が§aon§bになりました。(1stごとに搬入されます。）");
+                  }else {
+                      hopperl.remove(hpi);
+                      c.set("Storage." + item,c.getInt("Storage." + item) + hopper.get(hpi));
+                      try {
+                          c.save(f);
+                      } catch (IOException e) {
+                          e.printStackTrace();
+                      }
+                      hopperl.remove(hpi);
+                      hopper.remove(hpi);
+                      player.sendMessage("§6[§7Storege§6] §b自動回収機能が§coff§bになりました。");
+                  }
+              }else {
+                  player.sendMessage("§6[§7Storege§6] §cこの機能はSubscriber専用です。");
+                  player.sendMessage("§6[§7Storege§6] §cSubscribeはこちらから: §astore.masa3mc.xyz");
+              }
+            } else if(raw == 10){
                 int items = 0;
 
                 for(ItemStack is : player.getInventory().getContents()){

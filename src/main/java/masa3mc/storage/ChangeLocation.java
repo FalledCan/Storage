@@ -39,7 +39,7 @@ public class ChangeLocation implements CommandExecutor {
                 try{
                     loc1 = Integer.parseInt(args[0]);
                     loc2 = Integer.parseInt(args[1]);
-                    if(!(c.getStringList("Storages").size() > loc1) || !(loc1 > 1) || !(c.getStringList("Storages").size() > loc2) || !(loc2 > 1)) {
+                    if(!(c.getStringList("Storages").size() > loc1) || !(loc1 > -1) || !(c.getStringList("Storages").size() > loc2) || !(loc2 > -1)) {
                         player.sendMessage("§6[§7Storage§6] §c/locstorage [移動元Number] [移動先Number]");
                         return true;
                     }

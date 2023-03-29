@@ -19,8 +19,11 @@ public final class Storage extends JavaPlugin {
         getServer().getLogger().info("");
         Bukkit.getPluginManager().registerEvents(new Listeners(),this);
         getCommand("storage").setExecutor(new OpenStorageo());
+        getCommand("st").setExecutor(new OpenStorageo());
         getCommand("addStorage").setExecutor(new SetStorage());
+        getCommand("ast").setExecutor(new SetStorage());
         getCommand(("locstorage")).setExecutor(new ChangeLocation());
+        getCommand(("lst")).setExecutor(new ChangeLocation());
 
         if (!setupEconomy() ) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));

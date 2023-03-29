@@ -26,6 +26,10 @@ public class SetStorage implements CommandExecutor {
 
             Material material = player.getInventory().getItemInMainHand().getType();
             String item = material.name();
+            if(item.equals("SPAWNER")){
+                player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
+                return true;
+            }
             int size = item.length();
             if(size >= 3){
                 if (item.substring(size - 3).equals("BED") || item.substring(size - 3).equals("MAP") || item.substring(size - 3).equals("BOW") || item.substring(size - 3).equals("AXE") || item.substring(size - 3).equals("HOE")) {
