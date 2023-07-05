@@ -102,7 +102,7 @@ public class SetStorage implements CommandExecutor {
             }
 
  */
-            if(!item.equals("FISHING_ROD") && !item.equals("FLINT_AND_STEEL") && !item.equals("RABBIT_STEW") && !item.equals("BEETROOT_SOUP") && !item.equals("MUSHROOM_STEW") && !item.equals("SUSPICIOUS_STEW") && !item.equals("HONEY_BOTTLE") && !item.equals("CAKE") && !item.equals("ARMOR_STAND") && !item.equals("TRIDENT") && !item.equals("AIR") && !item.equals("SADDLE") && !item.equals("ELYTRA") && !item.equals("EGG") && !item.equals("ENDER_PEARL") && !item.equals("FIREWORK_ROCKET") && !item.equals("SHEARS") && !item.equals("SHIELD") && !item.equals("TOTEM_OF_UNDYING")){
+            //if(!item.equals("FISHING_ROD") && !item.equals("FLINT_AND_STEEL") && !item.equals("RABBIT_STEW") && !item.equals("BEETROOT_SOUP") && !item.equals("MUSHROOM_STEW") && !item.equals("SUSPICIOUS_STEW") && !item.equals("HONEY_BOTTLE") && !item.equals("CAKE") && !item.equals("ARMOR_STAND") && !item.equals("TRIDENT") && !item.equals("AIR") && !item.equals("SADDLE") && !item.equals("ELYTRA") && !item.equals("EGG") && !item.equals("ENDER_PEARL") && !item.equals("FIREWORK_ROCKET") && !item.equals("SHEARS") && !item.equals("SHIELD") && !item.equals("TOTEM_OF_UNDYING")){
 
                 File f = new File(Storage.getPlugin().getDataFolder(),"/Storages/" + player.getUniqueId() + ".yml");
                 FileConfiguration c = YamlConfiguration.loadConfiguration(f);
@@ -137,9 +137,7 @@ public class SetStorage implements CommandExecutor {
                     player.sendMessage("§6[§7Storage§6] §cすでに登録されています!!");
                 }
 
-            }else {
-                player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-            }
+
             return true;
 
         }

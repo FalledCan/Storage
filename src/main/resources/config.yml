@@ -1,5 +1,6 @@
 blocklist:
   - SPAWNER
+  - AIR
   - BED
   - MAP
   - BOW
@@ -24,3 +25,24 @@ blocklist:
   - HORSE_ARMOR
   - BANNER_PATTERN
   - MUSIC_DISC
+  - FISHING_ROD
+  - FLINT_AND_STEEL
+  - RABBIT_STEW
+  - BEETROOT_SOUP
+  - MUSHROOM_STEW
+  - SUSPICIOUS_STEW
+  - HONEY_BOTTLE
+  - CAKE
+  - ARMOR_STAND
+  - TRIDENT
+  - SADDLE
+  - ELYTRA
+  - EGG
+  - ENDER_PEARL
+  - FIREWORK_ROCKET
+  - SHEARS
+  - SHIELD
+  - TOTEM_OF_UNDYING
+
+
+#このブロックリストはアイテムに指定の単語が入っている場合弾かれます。
