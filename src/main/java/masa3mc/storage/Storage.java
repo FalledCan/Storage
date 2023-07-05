@@ -2,6 +2,7 @@ package masa3mc.storage;
 
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,9 +13,12 @@ public final class Storage extends JavaPlugin {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     public static Storage plugin;
+    public static FileConfiguration config;
+
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         plugin = this;
         getServer().getLogger().info("");
         Bukkit.getPluginManager().registerEvents(new Listeners(),this);
@@ -51,6 +55,10 @@ public final class Storage extends JavaPlugin {
 
     public static Storage getPlugin(){
         return plugin;
+    }
+
+    public FileConfiguration getConfig() {
+        return config;
     }
 
     @Override
