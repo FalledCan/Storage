@@ -1,2 +1,26 @@
 blocklist:
-  -
+  - SPAWNER
+  - BED
+  - MAP
+  - BOW
+  - AXE
+  - HOE
+  - SIGN
+  - BOAT
+  - BOOK
+  - BOOTS
+  - SWORD
+  - BANNER
+  - BUCKET
+  - HELMET
+  - SHOVEL
+  - POTION
+  - PICKAXE
+  - A_STICK
+  - MINECART
+  - LEGGINGS
+  - CHESTPLATE
+  - SHULKER_BOX
+  - HORSE_ARMOR
+  - BANNER_PATTERN
+  - MUSIC_DISC

@@ -28,7 +28,7 @@ public class SetStorage implements CommandExecutor {
             String item = material.name();
 
             for(String s:Storage.config.getStringList("Blocklist")){
-                if(item.equals(s)){
+                if(item.contains(s)){
                     player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
                     return true;
                 }
