@@ -27,82 +27,12 @@ public class SetStorage implements CommandExecutor {
             Material material = player.getInventory().getItemInMainHand().getType();
             String item = material.name();
 
-            for(String s:Storage.config.getStringList("Blocklist")){
+            for(String s:Storage.getPlugin().getConfig().getStringList("blocklist")){
                 if(item.contains(s)){
                     player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
                     return true;
                 }
             }
-/*
-            if(item.equals("SPAWNER")){
-                player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                return true;
-            }
-            int size = item.length();
-            if(size >= 3){
-                if (item.substring(size - 3).equals("BED") || item.substring(size - 3).equals("MAP") || item.substring(size - 3).equals("BOW") || item.substring(size - 3).equals("AXE") || item.substring(size - 3).equals("HOE")) {
-                    player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                    return true;
-                }
-                if(size >= 4) {
-                    if (item.substring(size - 4).equals("SIGN") || item.substring(size - 4).equals("BOAT") || item.substring(size - 4).equals("BOOK")) {
-                        player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                        return true;
-                    }
-                    if (size >= 5) {
-                        if (item.substring(size - 5).equals("BOOTS") || item.substring(size - 5).equals("SWORD")) {
-                            player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                            return true;
-                        }
-                        if (size >= 6) {
-                            if (item.substring(size - 6).equals("BANNER") || item.substring(size - 6).equals("BUCKET") || item.substring(size - 6).equals("HELMET") || item.substring(size - 6).equals("SHOVEL") || item.substring(size - 6).equals("POTION")) {
-                                player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                                return true;
-                            }
-                            if(size >= 7){
-                                if(item.substring(size - 7).equals("pickaxe") || item.substring(size - 7).equals("A_STICK")){
-                                    player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                                    return true;
-                                }
-                                if (size >= 8) {
-                                    if (item.substring(size - 8).equals("MINECART") || item.substring(size - 8).equals("LEGGINGS")) {
-                                        player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                                        return true;
-                                    }
-                                    if (size >= 10) {
-                                        if (item.substring(size - 10).equals("CHESTPLATE")) {
-                                            player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                                            return true;
-                                        }
-                                        if (size >= 11) {
-                                            if (item.substring(size - 11).equals("SHULKER_BOX") || item.substring(size - 11).equals("HORSE_ARMOR")) {
-                                                player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                                                return true;
-                                            }
-                                            if (size >= 14) {
-                                                if (item.substring(size - 14).equals("BANNER_PATTERN")) {
-                                                    player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
-                                                    return true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            if(size >= 10){
-                if(item.startsWith("MUSIC_DISC")){
-                    return true;
-                }
-            }
-
- */
-            //if(!item.equals("FISHING_ROD") && !item.equals("FLINT_AND_STEEL") && !item.equals("RABBIT_STEW") && !item.equals("BEETROOT_SOUP") && !item.equals("MUSHROOM_STEW") && !item.equals("SUSPICIOUS_STEW") && !item.equals("HONEY_BOTTLE") && !item.equals("CAKE") && !item.equals("ARMOR_STAND") && !item.equals("TRIDENT") && !item.equals("AIR") && !item.equals("SADDLE") && !item.equals("ELYTRA") && !item.equals("EGG") && !item.equals("ENDER_PEARL") && !item.equals("FIREWORK_ROCKET") && !item.equals("SHEARS") && !item.equals("SHIELD") && !item.equals("TOTEM_OF_UNDYING")){
 
                 File f = new File(Storage.getPlugin().getDataFolder(),"/Storages/" + player.getUniqueId() + ".yml");
                 FileConfiguration c = YamlConfiguration.loadConfiguration(f);

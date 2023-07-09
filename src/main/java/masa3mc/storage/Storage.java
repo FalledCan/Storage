@@ -13,7 +13,6 @@ public final class Storage extends JavaPlugin {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     public static Storage plugin;
-    public static FileConfiguration config;
 
 
     @Override
@@ -57,9 +56,6 @@ public final class Storage extends JavaPlugin {
         return plugin;
     }
 
-    public FileConfiguration getConfig() {
-        return config;
-    }
 
     @Override
     public void onDisable() {
