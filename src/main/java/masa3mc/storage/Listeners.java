@@ -105,17 +105,19 @@ public class Listeners implements Listener {
         Player player = event.getPlayer();
 
         for(String s: hopperl){
-            String item = s.replace(player.getName(),"");
-            File f = new File(Storage.getPlugin().getDataFolder(),"/Storages/" + player.getUniqueId() + ".yml");
-            FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-            c.set("Storage." + item,c.getInt("Storage." + item) + hopper.get(player.getName() +item));
-            try {
-                c.save(f);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(s.contains(player.getName())) {
+                String item = s.replace(player.getName(), "");
+                File f = new File(Storage.getPlugin().getDataFolder(), "/Storages/" + player.getUniqueId() + ".yml");
+                FileConfiguration c = YamlConfiguration.loadConfiguration(f);
+                c.set("Storage." + item, c.getInt("Storage." + item) + hopper.get(player.getName() + item));
+                try {
+                    c.save(f);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                hopperl.remove(s);
+                hopper.remove(s);
             }
-            hopperl.remove(s);
-            hopper.remove(s);
         }
     }
 
