@@ -1,5 +1,6 @@
 package masa3mc.storage;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Listeners implements Listener {
 
@@ -101,23 +104,55 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
+    public void onJoin(PlayerJoinEvent event){
+        Player player = event.getPlayer();
+        if(player.hasPermission("sub.large")){
+            Bukkit.getLogger().info("[Storage] tester");
+            if(reYaml.get().get(player.getUniqueId().toString()) != null){
+                for(String item: reYaml.get().getStringList(player.getUniqueId().toString())) {
+                    String hpi = player.getName() + item;
+                    Bukkit.getLogger().info("[Storage] tester2");
+                    if (hopper.get(hpi) == null) {
+                        hopperl.add(hpi);
+                        hopper.put(hpi, 0);
+                        Bukkit.getLogger().info("[Storage] " + player.getName() + "の" + item + "の自動回収がONにしました。");
+                        player.sendMessage("§6[§7Storege§6] " + item + "§bの自動回収機能が§aon§bになりました。");
+                    }
+                }
+                reYaml.get().set(player.getUniqueId().toString(),null);
+                reYaml.save();
+            }
+        }
+    }
+
+    @EventHandler
     public void onQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
-
-        for(String s: hopperl){
-            if(s.contains(player.getName())) {
-                String item = s.replace(player.getName(), "");
-                File f = new File(Storage.getPlugin().getDataFolder(), "/Storages/" + player.getUniqueId() + ".yml");
-                FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-                c.set("Storage." + item, c.getInt("Storage." + item) + hopper.get(player.getName() + item));
-                try {
-                    c.save(f);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if(player.hasPermission("sub.large")) {
+            List<String> strings = new ArrayList<>();
+            List<String> hop = new ArrayList<>();
+            File f = new File(Storage.getPlugin().getDataFolder(), "/Storages/" + player.getUniqueId() + ".yml");
+            FileConfiguration c = YamlConfiguration.loadConfiguration(f);
+            for (String s : hopperl) {
+                if (s.contains(player.getName())) {
+                    String item = s.replace(player.getName(), "");
+                    c.set("Storage." + item, c.getInt("Storage." + item) + hopper.get(player.getName() + item));
+                    strings.add(item);
+                    hop.add(s);
                 }
+            }
+            for (String s:hop){
                 hopperl.remove(s);
                 hopper.remove(s);
             }
+            try {
+                c.save(f);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            reYaml.get().set(player.getUniqueId().toString(), strings);
+            reYaml.save();
+
         }
     }
 
@@ -143,8 +178,8 @@ public class Listeners implements Listener {
                   if(hopper.get(hpi) == null){
                       hopperl.add(hpi);
                       hopper.put(hpi, 0);
-                      System.out.println(hpi);
-                      player.sendMessage("§6[§7Storege§6] §b自動回収機能が§aon§bになりました。(1st以上ごとに搬入されます。）");
+                      Bukkit.getLogger().info("[Storage] " + player.getName() + "の" + item + "の自動回収がONになりました。");
+                      player.sendMessage("§6[§7Storege§6] " + item + "§bの自動回収機能が§aon§bになりました。");
                   }else {
                       hopperl.remove(hpi);
                       c.set("Storage." + item,c.getInt("Storage." + item) + hopper.get(hpi));
@@ -155,8 +190,10 @@ public class Listeners implements Listener {
                       }
                       hopperl.remove(hpi);
                       hopper.remove(hpi);
-                      player.sendMessage("§6[§7Storege§6] §b自動回収機能が§coff§bになりました。");
+                      Bukkit.getLogger().info("[Storage] " + player.getName() + "の" + item + "の自動回収がOFFになりました。");
+                      player.sendMessage("§6[§7Storege§6] " + item + "§bの自動回収機能が§coff§bになりました。");
                   }
+                 gui.OpenItemGui(player, item);
               }else {
                   player.sendMessage("§6[§7Storege§6] §cこの機能はメンバーシッププラン専用です。");
                   player.sendMessage("§6[§7Storege§6] §cサブスクはこちらから: §astore.masa3mc.xyz");

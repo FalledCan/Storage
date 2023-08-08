@@ -161,6 +161,13 @@ public class GUI {
         ItemStack toggle = new ItemStack(Material.HOPPER);
         ItemMeta togglem = toggle.getItemMeta();
         togglem.setDisplayName("§6アイテム自動回収");
+        ArrayList<String> toggle_list = new ArrayList<String>();
+        if(Listeners.hopperl.contains(player.getName() + item)){
+            toggle_list.add("§6現在: §aon");
+        }else {
+            toggle_list.add("§6現在: §coff");
+        }
+        togglem.setLore(toggle_list);
         toggle.setItemMeta(togglem);
 
         ItemStack back = new ItemStack(Material.RED_CONCRETE);
