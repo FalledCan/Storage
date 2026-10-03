@@ -2,24 +2,27 @@ name: Storage
 version: ${project.version}
 main: masa3mc.storage.Storage
 api-version: 1.20
-softdepend: [Vault]
 depend: [Vault]
 commands:
   storage:
-    usage: /storage
+    usage: /storage [page]
     description: Open Storage GUI
-  st:
-    usage: /st
-    description: Open Storage GUI
+    aliases: [st]
   addstorage:
     usage: /addstorage
-    description: add Storage item
-  ast:
-    usage: /ast
-    description: add Storage item
+    description: Add the item in your main hand to Storage
+    aliases: [ast]
   locstorage:
-    usage: /locstorage
-    description: chencge
-  lst:
-    usage: /lst
-    description: chencge
+    usage: /locstorage <from> <to>
+    description: Swap the position of two Storage items
+    aliases: [lst]
+permissions:
+  storage.open:
+    description: Open Storage GUI and change item positions
+    default: op
+  storage.add:
+    description: Register new items to Storage
+    default: op
+  sub.large:
+    description: Use the auto-collect feature
+    default: op
