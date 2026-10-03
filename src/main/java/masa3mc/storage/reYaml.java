@@ -1,6 +1,5 @@
 package masa3mc.storage;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,27 +11,21 @@ public class reYaml {
     private static File file;
     private static FileConfiguration cf;
 
-    public static void setup(){
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("Storage").getDataFolder(), "re.yml");
-        if(!file.exists()){
-            try {
-                file.createNewFile();
-            }catch (IOException e){
-                //lol
-            }
-        }
+    public static void setup() {
+        Storage.getPlugin().getDataFolder().mkdirs();
+        file = new File(Storage.getPlugin().getDataFolder(), "re.yml");
         cf = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static FileConfiguration get(){
+    public static FileConfiguration get() {
         return cf;
     }
 
-    public static void save(){
+    public static void save() {
         try {
             cf.save(file);
-        }catch (IOException e){
-            System.out.println("no save");
+        } catch (IOException e) {
+            Storage.getPlugin().getLogger().warning("re.ymlの保存に失敗しました: " + e.getMessage());
         }
     }
 

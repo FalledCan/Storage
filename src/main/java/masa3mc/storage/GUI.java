@@ -9,203 +9,115 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GUI {
 
-    public void OpenGui(Player player,int n){
+    public static final int PAGE_SIZE = 45;
+    public static final int MAX_PAGE = 9;
 
-        File f = new File(Storage.getPlugin().getDataFolder().getAbsolutePath(),"/Storages/" + player.getUniqueId() + ".yml");
+    public void OpenGui(Player player, int n) {
+        if (n < 1 || n > MAX_PAGE) {
+            n = 1;
+        }
 
-            FileConfiguration c = YamlConfiguration.loadConfiguration(f);
+        FileConfiguration c = YamlConfiguration.loadConfiguration(Storage.getStorageFile(player));
 
-            Inventory inv = Bukkit.createInventory(null, 54, "§6[§7Storege§6]");
+        StorageHolder holder = new StorageHolder(StorageHolder.Type.MAIN, n, null);
+        Inventory inv = Bukkit.createInventory(holder, 54, "§6[§7Storage§6]");
+        holder.setInventory(inv);
 
-            int number = 0;
-            int slot = 0;
-            for (String item : c.getStringList("Storages")) {
-                if(n == 2){
-                    if(number <= 44) {
-                        number++;
-                        continue;
-                    }else
-                    if(number == 90){
-                        break;
-                    }
-                }else if(n == 3){
-                    if(number < 90) {
-                        number++;
-                        continue;
-                    }else
-                    if(number == 135)
-                        break;
-                }else if(n == 4){
-                    if(number < 135){
-                        number++;
-                        continue;
-                    }else
-                    if(number == 180)
-                        break;
-                }else if(n == 5){
-                    if(number < 180){
-                        number++;
-                        continue;
-                    }else
-                    if(number == 225)
-                        break;
-                }else if(n == 6){
-                    if(number < 225){
-                        number++;
-                        continue;
-                    }else
-                    if(number == 270)
-                        break;
-                }else if(n == 7) {
-                    if (number < 270){
-                        number++;
-                        continue;
-                    }else
-                    if(number == 315)
-                        break;
-                }else if(n == 8){
-                    if(number < 315){
-                        number++;
-                        continue;
-                    }else
-                    if(number == 360)
-                        break;
-                }else if(n == 9){
-                    if(number < 360) {
-                        number++;
-                        continue;
-                    }else
-                    if(number == 405)
-                        break;
-                }else
-                if(number == 45){
-                    break;
-                }
-                ItemStack itemStack = new ItemStack(Material.valueOf(item));
-                ItemMeta meta = itemStack.getItemMeta();
-                meta.setDisplayName("§7No."+ number + "-§6" + item);
-                ArrayList<String> list = new ArrayList<String>();
-                list.add("§7Storage capacity");
-                int items = c.getInt("Storage." + item);
-                if (items < 64) {
-                    list.add("§7" + items + " items");
-                } else {
-                    int stack = items / 64;
-                    int stackitems = items % 64;
-                    list.add("§7" + stack + " stack");
-                    list.add("§7" + stackitems + " items");
-                }
-                meta.setLore(list);
-                itemStack.setItemMeta(meta);
-                inv.setItem(slot, itemStack);
-                number++;
-                slot++;
+        List<String> storages = c.getStringList("Storages");
+        int start = (n - 1) * PAGE_SIZE;
+        int end = Math.min(start + PAGE_SIZE, storages.size());
+        for (int number = start; number < end; number++) {
+            String item = storages.get(number);
+            Material material = Material.matchMaterial(item);
+            ItemStack itemStack = new ItemStack(material != null && material.isItem() ? material : Material.BARRIER);
+            ItemMeta meta = itemStack.getItemMeta();
+            meta.setDisplayName("§7No." + number + "-§6" + item);
+            List<String> list = capacityLore(c.getInt("Storage." + item));
+            if (material == null || !material.isItem()) {
+                list.add("§c(このアイテムは現在のバージョンに存在しません)");
             }
+            meta.setLore(list);
+            itemStack.setItemMeta(meta);
+            inv.setItem(number - start, itemStack);
+        }
 
-            for(int i = 0; i < 9; i++){
-                String[] sh = {"WHITE_SHULKER_BOX","RED_SHULKER_BOX"};
-                String item;
-                if(n == i+1){
-                    item = sh[1];
-                }else {
-                    item = sh[0];
-                }
-                ItemStack itemStack = new ItemStack(Material.valueOf(item));
-                ItemMeta meta = itemStack.getItemMeta();
-                meta.setDisplayName("§6[§7Storage§6] - " + (i+1));
-                itemStack.setItemMeta(meta);
-                inv.setItem(i+45, itemStack);
-            }
-            player.openInventory(inv);
+        for (int i = 0; i < MAX_PAGE; i++) {
+            ItemStack itemStack = new ItemStack(n == i + 1 ? Material.RED_SHULKER_BOX : Material.WHITE_SHULKER_BOX);
+            ItemMeta meta = itemStack.getItemMeta();
+            meta.setDisplayName("§6[§7Storage§6] - " + (i + 1));
+            itemStack.setItemMeta(meta);
+            inv.setItem(i + PAGE_SIZE, itemStack);
+        }
+        player.openInventory(inv);
     }
 
 
-    public void OpenItemGui(Player player, String item){
-        Inventory inv = Bukkit.createInventory(null, 27,"§6[§7Storege§6] items");
-
-        File f = new File(Storage.getPlugin().getDataFolder(),"/Storages/" + player.getUniqueId() + ".yml");
-        FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-
-        ItemStack item1 = new ItemStack(Material.valueOf(item));
-        ItemMeta meta1 = item1.getItemMeta();
-        meta1.setDisplayName("§6" + item);
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("§7Storage capacity");
-        int items = c.getInt("Storage." + item);
-        if(items < 64){
-            list.add("§7" + items + " items");
-        }else {
-            int stack = items / 64;
-            int stackitems = items % 64;
-            list.add("§7" + stack + " stack");
-            list.add("§7" + stackitems + " items");
+    public void OpenItemGui(Player player, String item) {
+        Material material = Material.matchMaterial(item);
+        if (material == null || !material.isItem()) {
+            player.sendMessage("§6[§7Storage§6] §c" + item + "は現在のバージョンに存在しないため操作できません。");
+            return;
         }
-        meta1.setLore(list);
+
+        StorageHolder holder = new StorageHolder(StorageHolder.Type.ITEM, 1, material.name());
+        Inventory inv = Bukkit.createInventory(holder, 27, "§6[§7Storage§6] items");
+        holder.setInventory(inv);
+
+        FileConfiguration c = YamlConfiguration.loadConfiguration(Storage.getStorageFile(player));
+        int items = c.getInt("Storage." + material.name());
+
+        ItemStack item1 = new ItemStack(material);
+        ItemMeta meta1 = item1.getItemMeta();
+        meta1.setDisplayName("§6" + material.name());
+        meta1.setLore(capacityLore(items));
         item1.setItemMeta(meta1);
-
-        ItemStack item2 = new ItemStack(Material.GREEN_CONCRETE);
-        ItemMeta meta2 = item2.getItemMeta();
-        meta2.setDisplayName("§6すべて保存する");
-        item2.setItemMeta(meta2);
-
-        ItemStack item3 = new ItemStack(Material.LIME_CONCRETE);
-        ItemMeta meta3 = item3.getItemMeta();
-        meta3.setDisplayName("§61stack保存する");
-        item3.setItemMeta(meta3);
 
         ItemStack toggle = new ItemStack(Material.HOPPER);
         ItemMeta togglem = toggle.getItemMeta();
         togglem.setDisplayName("§6アイテム自動回収");
-        ArrayList<String> toggle_list = new ArrayList<String>();
-        if(Listeners.hopperl.contains(player.getName() + item)){
+        ArrayList<String> toggle_list = new ArrayList<>();
+        if (Listeners.isAutoCollect(player, material.name())) {
             toggle_list.add("§6現在: §aon");
-        }else {
+        } else {
             toggle_list.add("§6現在: §coff");
         }
         togglem.setLore(toggle_list);
         toggle.setItemMeta(togglem);
 
-        ItemStack back = new ItemStack(Material.RED_CONCRETE);
-        ItemMeta backmeta = back.getItemMeta();
-        backmeta.setDisplayName("§c戻る");
-        back.setItemMeta(backmeta);
-
-
-
-        if(c.getInt("Storage." + item) > 63){
-            ItemStack item4 = new ItemStack(Material.LIGHT_BLUE_CONCRETE);
-            ItemMeta meta4 = item4.getItemMeta();
-            meta4.setDisplayName("§61stack取り出す");
-            item4.setItemMeta(meta4);
-
-            ItemStack item5 = new ItemStack(Material.BLUE_CONCRETE);
-            ItemMeta meta5 = item5.getItemMeta();
-            meta5.setDisplayName("§6インベントリの空き分だけ取り出す");
-            item5.setItemMeta(meta5);
-
-            inv.setItem(10, item2);
-            inv.setItem(11, item3);
-            inv.setItem(13, item1);
-            inv.setItem(15, item4);
-            inv.setItem(16, item5);
-            inv.setItem(26, back);
-        }else {
-            inv.setItem(10, item2);
-            inv.setItem(11, item3);
-            inv.setItem(13, item1);
-            inv.setItem(26, back);
-        }
         inv.setItem(8, toggle);
+        inv.setItem(10, button(Material.GREEN_CONCRETE, "§6すべて保存する"));
+        inv.setItem(11, button(Material.LIME_CONCRETE, "§61stack保存する"));
+        inv.setItem(13, item1);
+        if (items > 0) {
+            inv.setItem(15, button(Material.LIGHT_BLUE_CONCRETE, "§61stack取り出す"));
+            inv.setItem(16, button(Material.BLUE_CONCRETE, "§6インベントリの空き分だけ取り出す"));
+        }
+        inv.setItem(26, button(Material.RED_CONCRETE, "§c戻る"));
         player.openInventory(inv);
     }
 
-    public void chengeGUI(Player player,String item){
-        Inventory inv = Bukkit.createInventory(null, 54, "§6[§7Storege§6] - change");
+    private static ItemStack button(Material material, String name) {
+        ItemStack itemStack = new ItemStack(material);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setDisplayName(name);
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
 
+    private static List<String> capacityLore(int items) {
+        List<String> list = new ArrayList<>();
+        list.add("§7Storage capacity");
+        if (items < 64) {
+            list.add("§7" + items + " items");
+        } else {
+            list.add("§7" + (items / 64) + " stack");
+            list.add("§7" + (items % 64) + " items");
+        }
+        return list;
     }
 }
