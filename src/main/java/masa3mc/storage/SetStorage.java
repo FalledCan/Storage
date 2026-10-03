@@ -15,39 +15,36 @@ import java.util.List;
 
 public class SetStorage implements CommandExecutor {
 
-    private static final int MAX_STORAGES = GUI.PAGE_SIZE * GUI.MAX_PAGE;
-    private static final double PRICE = 30000;
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cこのコマンドはプレイヤーのみ実行できます。");
+            Messages.send(sender, "player-only");
             return true;
         }
         Player player = (Player) sender;
 
         if (!player.hasPermission("storage.add")) {
-            player.sendMessage("§6[§7Storage§6] §cあなたはstorage.addを持っていません。");
+            Messages.send(player, "no-permission", "permission", "storage.add");
             return true;
         }
 
         Material material = player.getInventory().getItemInMainHand().getType();
         String item = material.name();
 
-        if (material.isAir() || !material.isItem()) {
-            player.sendMessage("§6[§7Storage§6] §c登録したいアイテムをメインハンドに持ってください。");
+        if (material == Material.AIR || !material.isItem()) {
+            Messages.send(player, "hold-item");
             return true;
         }
 
         // スタックできない/上限が64未満のアイテムは取り出し時に溢れるため登録不可
         if (material.getMaxStackSize() < 64) {
-            player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
+            Messages.send(player, "cannot-register", "item", item);
             return true;
         }
 
         for (String s : Storage.getPlugin().getConfig().getStringList("blocklist")) {
             if (item.contains(s)) {
-                player.sendMessage("§6[§7Storage§6] §c" + item + "は登録できません!");
+                Messages.send(player, "cannot-register", "item", item);
                 return true;
             }
         }
@@ -56,24 +53,28 @@ public class SetStorage implements CommandExecutor {
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 
         if (c.get("Storage." + item) != null) {
-            player.sendMessage("§6[§7Storage§6] §cすでに登録されています!!");
+            Messages.send(player, "already-registered", "item", item);
             return true;
         }
 
         List<String> storage = c.getStringList("Storages");
-        if (storage.size() >= MAX_STORAGES) {
-            player.sendMessage("§6[§7Storage§6] §c登録上限のため登録できません。");
+        if (storage.size() >= Storage.getMaxStorages()) {
+            Messages.send(player, "limit-reached", "max", Storage.getMaxStorages());
             return true;
         }
 
         Economy economy = Storage.getEconomy();
-        if (economy.getBalance(player) < PRICE) {
-            player.sendMessage("§6[§7Storage§6] §c登録するには3万円が必要です。");
-            return true;
-        }
-        if (!economy.withdrawPlayer(player, PRICE).transactionSuccess()) {
-            player.sendMessage("§6[§7Storage§6] §c支払いに失敗しました。");
-            return true;
+        double cost = Math.max(0, Storage.getPlugin().getConfig().getDouble("registration-cost", 0));
+        boolean paid = economy != null && cost > 0 && !player.hasPermission("storage.free");
+        if (paid) {
+            if (economy.getBalance(player) < cost) {
+                Messages.send(player, "not-enough-money", "cost", Storage.formatMoney(cost));
+                return true;
+            }
+            if (!economy.withdrawPlayer(player, cost).transactionSuccess()) {
+                Messages.send(player, "payment-failed");
+                return true;
+            }
         }
 
         storage.add(item);
@@ -83,11 +84,17 @@ public class SetStorage implements CommandExecutor {
             c.save(f);
         } catch (IOException e) {
             e.printStackTrace();
-            economy.depositPlayer(player, PRICE);
-            player.sendMessage("§6[§7Storage§6] §c保存に失敗したため返金しました。");
+            if (paid) {
+                economy.depositPlayer(player, cost);
+                Messages.send(player, "save-failed-refund");
+            }
             return true;
         }
-        player.sendMessage("§6[§7Storage§6] §aStorageに§b" + item + "§aを追加しました。");
+        if (paid) {
+            Messages.send(player, "registered-paid", "item", item, "cost", Storage.formatMoney(cost));
+        } else {
+            Messages.send(player, "registered", "item", item);
+        }
         return true;
     }
 }

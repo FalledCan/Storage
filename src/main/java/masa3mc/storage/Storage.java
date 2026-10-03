@@ -16,16 +16,17 @@ public final class Storage extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
         plugin = this;
+        saveDefaultConfig();
+        Messages.load(this);
         if (!setupEconomy()) {
-            getLogger().severe("Vault(または経済プラグイン)が見つからないため無効化します。");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+            getLogger().info("Vault economy not found, item registration will be free.");
         }
         reYaml.setup();
         Bukkit.getPluginManager().registerEvents(new Listeners(), this);
-        getCommand("storage").setExecutor(new OpenStorageo());
+        OpenStorageo open = new OpenStorageo();
+        getCommand("storage").setExecutor(open);
+        getCommand("storage").setTabCompleter(open);
         getCommand("addstorage").setExecutor(new SetStorage());
         getCommand("locstorage").setExecutor(new ChangeLocation());
 
@@ -47,6 +48,7 @@ public final class Storage extends JavaPlugin {
         return econ != null;
     }
 
+    /** Vaultの経済プラグインが無い場合は null */
     public static Economy getEconomy() {
         return econ;
     }
@@ -59,6 +61,23 @@ public final class Storage extends JavaPlugin {
         return new File(plugin.getDataFolder(), "Storages/" + player.getUniqueId() + ".yml");
     }
 
+    public static int getMaxPages() {
+        return Math.max(1, Math.min(9, plugin.getConfig().getInt("max-pages", 9)));
+    }
+
+    public static int getMaxStorages() {
+        return GUI.PAGE_SIZE * getMaxPages();
+    }
+
+    public static String formatMoney(double amount) {
+        return econ != null ? econ.format(amount) : String.valueOf(amount);
+    }
+
+    public void reload() {
+        reloadConfig();
+        Messages.load(this);
+    }
+
 
     @Override
     public void onDisable() {
@@ -66,9 +85,7 @@ public final class Storage extends JavaPlugin {
             return;
         }
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getOpenInventory().getTopInventory().getHolder() instanceof StorageHolder) {
-                player.closeInventory();
-            }
+            Listeners.closeIfStorageOpen(player);
             Listeners.saveAutoCollectState(player);
         }
     }

@@ -1,0 +1,47 @@
+# Storage - 日本語メッセージ
+# カラーコードは '&' を使用します。{prefix} は下の prefix に置換されます。
+prefix: "&6[&7Storage&6] "
+
+player-only: "&cこのコマンドはプレイヤーのみ実行できます。"
+no-permission: "{prefix}&c権限がありません ({permission})。"
+reloaded: "{prefix}&a設定を再読み込みしました。"
+not-registered: "{prefix}&cまだアイテムが登録されていません。アイテムを持って /addstorage で登録できます。"
+
+hold-item: "{prefix}&c登録したいアイテムをメインハンドに持ってください。"
+cannot-register: "{prefix}&c{item}は登録できません!"
+already-registered: "{prefix}&c{item}はすでに登録されています!"
+limit-reached: "{prefix}&c登録上限({max}個)のため登録できません。"
+not-enough-money: "{prefix}&c登録するには{cost}が必要です。"
+payment-failed: "{prefix}&c支払いに失敗しました。"
+save-failed-refund: "{prefix}&c保存に失敗したため返金しました。"
+registered: "{prefix}&aStorageに&b{item}&aを追加しました。"
+registered-paid: "{prefix}&aStorageに&b{item}&aを追加しました。&7(-{cost})"
+
+loc-usage: "{prefix}&c/{label} [移動元Number] [移動先Number]"
+loc-range: "{prefix}&cNumberは0～{max}で指定してください。"
+loc-done: "{prefix}&7{item1}&6と&7{item2}&6の位置の変更が完了しました。"
+
+item-missing: "{prefix}&c{item}は現在のバージョンに存在しないため操作できません。"
+autocollect-on: "{prefix}&f{item}&bの自動回収機能が&aon&bになりました。"
+autocollect-off: "{prefix}&f{item}&bの自動回収機能が&coff&bになりました。"
+autocollect-no-permission: "{prefix}&c自動回収機能を使う権限がありません。"
+
+gui:
+  title-main: "&6[&7Storage&6]"
+  title-item: "&6[&7Storage&6] items"
+  page: "&6[&7Storage&6] - {page}"
+  item-name: "&7No.{number}-&6{item}"
+  item-detail-name: "&6{item}"
+  capacity:
+    - "&7Storage capacity"
+    - "&7{stacks} stack"
+    - "&7{items} items"
+  missing-material: "&c(このアイテムは現在のバージョンに存在しません)"
+  autocollect: "&6アイテム自動回収"
+  autocollect-status-on: "&6現在: &aon"
+  autocollect-status-off: "&6現在: &coff"
+  store-all: "&6すべて保存する"
+  store-stack: "&61stack保存する"
+  take-stack: "&61stack取り出す"
+  take-all: "&6インベントリの空き分だけ取り出す"
+  back: "&c戻る"
