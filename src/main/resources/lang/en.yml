@@ -45,3 +45,20 @@ gui:
   take-stack: "&6Take 1 stack"
   take-all: "&6Take as much as fits in inventory"
   back: "&cBack"
+  item-hint:
+    - ""
+    - "&eLeft-click&7: open"
+    - "&eRight-click&7: select to rearrange"
+  selected-prefix: "&e> "
+  selected-hint:
+    - ""
+    - "&eSelected"
+    - "&7Right-click another item to swap"
+    - "&7Right-click this item again to cancel"
+  swap-hint:
+    - ""
+    - "&eRight-click&7: swap with &f{item}"
+    - "&eLeft-click&7: open"
+  page-selected-hint:
+    - "&7Selected: &f{item}"
+    - "&7You can swap across pages"

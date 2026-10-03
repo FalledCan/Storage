@@ -17,18 +17,26 @@ public class GUI {
     public static final int PAGE_SIZE = 45;
 
     public void OpenGui(Player player, int n) {
+        OpenGui(player, n, -1);
+    }
+
+    /** selected: 並び替えのために選択中のアイテム番号 (未選択は -1) */
+    public void OpenGui(Player player, int n, int selected) {
         int maxPages = Storage.getMaxPages();
         if (n < 1 || n > maxPages) {
             n = 1;
         }
 
         FileConfiguration c = YamlConfiguration.loadConfiguration(Storage.getStorageFile(player));
+        List<String> storages = c.getStringList("Storages");
+        if (selected >= storages.size()) {
+            selected = -1;
+        }
 
-        StorageHolder holder = new StorageHolder(StorageHolder.Type.MAIN, n, null);
+        StorageHolder holder = new StorageHolder(StorageHolder.Type.MAIN, n, null, selected);
         Inventory inv = Bukkit.createInventory(holder, 54, Messages.get("gui.title-main"));
         holder.setInventory(inv);
 
-        List<String> storages = c.getStringList("Storages");
         int start = (n - 1) * PAGE_SIZE;
         int end = Math.min(start + PAGE_SIZE, storages.size());
         for (int number = start; number < end; number++) {
@@ -37,10 +45,21 @@ public class GUI {
             boolean exists = material != null && material.isItem();
             ItemStack itemStack = new ItemStack(exists ? material : Material.BARRIER);
             ItemMeta meta = itemStack.getItemMeta();
-            meta.setDisplayName(Messages.get("gui.item-name", "number", number, "item", item));
+            String name = Messages.get("gui.item-name", "number", number, "item", item);
+            if (number == selected) {
+                name = Messages.get("gui.selected-prefix") + name;
+            }
+            meta.setDisplayName(name);
             List<String> list = capacityLore(c.getInt("Storage." + item));
             if (!exists) {
                 list.add(Messages.get("gui.missing-material"));
+            }
+            if (number == selected) {
+                list.addAll(Messages.getList("gui.selected-hint"));
+            } else if (selected >= 0) {
+                list.addAll(Messages.getList("gui.swap-hint", "item", storages.get(selected)));
+            } else {
+                list.addAll(Messages.getList("gui.item-hint"));
             }
             meta.setLore(list);
             itemStack.setItemMeta(meta);
@@ -51,6 +70,9 @@ public class GUI {
             ItemStack itemStack = new ItemStack(n == i + 1 ? Material.RED_SHULKER_BOX : Material.WHITE_SHULKER_BOX);
             ItemMeta meta = itemStack.getItemMeta();
             meta.setDisplayName(Messages.get("gui.page", "page", i + 1));
+            if (selected >= 0) {
+                meta.setLore(Messages.getList("gui.page-selected-hint", "item", storages.get(selected)));
+            }
             itemStack.setItemMeta(meta);
             inv.setItem(i + PAGE_SIZE, itemStack);
         }

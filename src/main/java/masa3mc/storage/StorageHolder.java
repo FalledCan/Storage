@@ -14,12 +14,19 @@ public class StorageHolder implements InventoryHolder {
     private final Type type;
     private final int page;
     private final String item;
+    private final int selected;
     private Inventory inventory;
 
     public StorageHolder(Type type, int page, String item) {
+        this(type, page, item, -1);
+    }
+
+    /** selected: 並び替えのために選択中のアイテム番号 (未選択は -1) */
+    public StorageHolder(Type type, int page, String item, int selected) {
         this.type = type;
         this.page = page;
         this.item = item;
+        this.selected = selected;
     }
 
     public Type getType() {
@@ -28,6 +35,10 @@ public class StorageHolder implements InventoryHolder {
 
     public int getPage() {
         return page;
+    }
+
+    public int getSelected() {
+        return selected;
     }
 
     public String getItem() {
