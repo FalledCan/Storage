@@ -34,7 +34,7 @@ A per-player virtual item storage plugin for Spigot / Paper. English description
 - `registration-cost`: 登録費用。`0` または Vault 無しで無料
 - `max-pages`: ページ数 (1-9)
 - `auto-collect.enabled`: 自動回収機能の有効/無効
-- `blocklist`: この単語を含むアイテムは登録不可(最大スタック数64未満のアイテムは常に不可)
+- `blocklist`: 登録不可のアイテム。`*` でワイルドカード指定(例: `*_SPAWN_EGG`)、`*` 無しは完全一致。最大スタック数64未満のアイテムは常に登録不可
 
 ## 動作環境
 - Spigot / Paper 1.13 〜 26.3(最新)(Java はサーバーの要件に準拠、プラグイン自体は Java 8 以上)

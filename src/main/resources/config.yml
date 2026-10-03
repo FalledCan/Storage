@@ -15,50 +15,19 @@ auto-collect:
   # Requires the storage.autocollect permission.
   enabled: true
 
-# Items whose material name contains any of these words cannot be registered.
-# Items with a max stack size below 64 are always rejected.
+# Items that cannot be registered. Use '*' as a wildcard (e.g. *_SPAWN_EGG).
+# Without '*' the name must match exactly.
+# Items with a max stack size below 64 (tools, armor, potions, shulker boxes,
+# ender pearls, signs, ...) are always rejected, so they don't need to be listed.
 blocklist:
-  - SPAWNER
-  - AIR
-  - BED
-  - MAP
-  - BOW
-  - AXE
-  - HOE
-  - SIGN
-  - BOAT
-  - BOOK
-  - BOOTS
-  - SWORD
-  - BANNER
-  - BUCKET
-  - HELMET
-  - SHOVEL
-  - POTION
-  - PICKAXE
-  - A_STICK
-  - MINECART
-  - LEGGINGS
-  - CHESTPLATE
-  - SHULKER_BOX
-  - HORSE_ARMOR
-  - BANNER_PATTERN
-  - MUSIC_DISC
-  - FISHING_ROD
-  - FLINT_AND_STEEL
-  - RABBIT_STEW
-  - BEETROOT_SOUP
-  - MUSHROOM_STEW
-  - SUSPICIOUS_STEW
-  - HONEY_BOTTLE
-  - CAKE
-  - ARMOR_STAND
-  - TRIDENT
-  - SADDLE
-  - ELYTRA
-  - EGG
-  - ENDER_PEARL
-  - FIREWORK_ROCKET
-  - SHEARS
-  - SHIELD
-  - TOTEM_OF_UNDYING
+  - "*SPAWNER"
+  - "*_SPAWN_EGG"
+  - "*COMMAND_BLOCK"
+  - "STRUCTURE_*"
+  - "TEST_*"
+  - JIGSAW
+  - BARRIER
+  - LIGHT
+  - BEDROCK
+  - END_PORTAL_FRAME
+  - REINFORCED_DEEPSLATE

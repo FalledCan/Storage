@@ -88,7 +88,7 @@ public class Listeners implements Listener {
         File f = Storage.getStorageFile(player);
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         for (Map.Entry<String, Integer> e : map.entrySet()) {
-            c.set("Storage." + e.getKey(), c.getInt("Storage." + e.getKey()) + e.getValue());
+            c.set("Storage." + e.getKey(), add(c.getInt("Storage." + e.getKey()), e.getValue()));
             e.setValue(0);
             items.add(e.getKey());
         }
@@ -121,6 +121,11 @@ public class Listeners implements Listener {
         }
         reYaml.get().set(key, null);
         reYaml.save();
+    }
+
+    /** int の上限で頭打ちにする加算(オーバーフローで負数になるのを防ぐ) */
+    private static int add(int a, int b) {
+        return (int) Math.min((long) a + b, Integer.MAX_VALUE);
     }
 
     private static void save(FileConfiguration c, File f) {
@@ -297,19 +302,19 @@ public class Listeners implements Listener {
                     if (map.isEmpty()) {
                         hopper.remove(player.getUniqueId());
                     }
-                    c.set("Storage." + item, stored + buffered);
+                    c.set("Storage." + item, add(stored, buffered));
                     save(c, f);
                     Messages.send(player, "autocollect-off", "item", item);
                 }
                 break;
             case 10: {
-                int removed = removePlain(inv, material, countPlain(inv, material));
+                int removed = removePlain(inv, material, Math.min(countPlain(inv, material), Integer.MAX_VALUE - stored));
                 c.set("Storage." + item, stored + removed);
                 save(c, f);
                 break;
             }
             case 11: {
-                int removed = removePlain(inv, material, 64);
+                int removed = removePlain(inv, material, Math.min(64, Integer.MAX_VALUE - stored));
                 c.set("Storage." + item, stored + removed);
                 save(c, f);
                 break;
@@ -359,7 +364,7 @@ public class Listeners implements Listener {
         if (buffered > FLUSH_THRESHOLD) {
             File f = Storage.getStorageFile(player);
             FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-            c.set("Storage." + item, c.getInt("Storage." + item) + buffered);
+            c.set("Storage." + item, add(c.getInt("Storage." + item), buffered));
             save(c, f);
             buffered = 0;
         }

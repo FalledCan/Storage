@@ -37,9 +37,9 @@ registration-cost: 30000 # 0 = free (also free when Vault is not installed)
 max-pages: 9            # 1-9, 45 items per page
 auto-collect:
   enabled: true
-blocklist:              # material names containing these words cannot be registered
-  - SHULKER_BOX
-  - ...
+blocklist:              # items that cannot be registered (* = wildcard)
+  - "*_SPAWN_EGG"
+  - BEDROCK
 ```
 Items with a max stack size below 64 (tools, armor, potions, ender pearls, …) cannot be registered.
 
