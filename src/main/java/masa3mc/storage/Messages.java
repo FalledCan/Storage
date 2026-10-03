@@ -65,8 +65,13 @@ public final class Messages {
 
     /** key のメッセージを取得し、{name} 形式のプレースホルダーを置換する (placeholders は name, value の順) */
     public static String get(String key, Object... placeholders) {
-        String s = lang.getString(key, key);
-        s = s.replace("{prefix}", lang.getString("prefix", ""));
+        // getString(path, def) だとjar内のデフォルトが使われないため、def無しで取得する
+        String s = lang.getString(key);
+        if (s == null) {
+            s = key;
+        }
+        String prefix = lang.getString("prefix");
+        s = s.replace("{prefix}", prefix == null ? "" : prefix);
         for (int i = 0; i + 1 < placeholders.length; i += 2) {
             s = s.replace("{" + placeholders[i] + "}", String.valueOf(placeholders[i + 1]));
         }

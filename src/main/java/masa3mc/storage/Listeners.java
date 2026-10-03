@@ -88,7 +88,7 @@ public class Listeners implements Listener {
         File f = Storage.getStorageFile(player);
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         for (Map.Entry<String, Integer> e : map.entrySet()) {
-            c.set("Storage." + e.getKey(), c.getInt("Storage." + e.getKey()) + e.getValue());
+            c.set("Storage." + e.getKey(), add(c.getInt("Storage." + e.getKey()), e.getValue()));
             e.setValue(0);
             items.add(e.getKey());
         }
@@ -121,6 +121,11 @@ public class Listeners implements Listener {
         }
         reYaml.get().set(key, null);
         reYaml.save();
+    }
+
+    /** int の上限で頭打ちにする加算(オーバーフローで負数になるのを防ぐ) */
+    private static int add(int a, int b) {
+        return (int) Math.min((long) a + b, Integer.MAX_VALUE);
     }
 
     private static void save(FileConfiguration c, File f) {
@@ -205,6 +210,7 @@ public class Listeners implements Listener {
         Player player = (Player) event.getWhoClicked();
         StorageHolder holder = (StorageHolder) event.getInventory().getHolder();
         int raw = event.getRawSlot();
+        boolean right = event.isRightClick();
         if (raw < 0 || raw >= event.getInventory().getSize()) {
             return;
         }
@@ -214,26 +220,52 @@ public class Listeners implements Listener {
                 return;
             }
             if (holder.getType() == StorageHolder.Type.MAIN) {
-                clickMain(player, holder, raw);
+                clickMain(player, holder, raw, right);
             } else {
                 clickItem(player, holder, raw);
             }
         });
     }
 
-    private void clickMain(Player player, StorageHolder holder, int raw) {
+    private void clickMain(Player player, StorageHolder holder, int raw, boolean right) {
         GUI gui = new GUI();
+        int selected = holder.getSelected();
         if (raw >= GUI.PAGE_SIZE) {
-            gui.OpenGui(player, raw - GUI.PAGE_SIZE + 1);
+            int page = raw - GUI.PAGE_SIZE + 1;
+            if (page <= Storage.getMaxPages()) {
+                // ページを移動しても選択状態は維持する
+                gui.OpenGui(player, page, selected);
+            }
             return;
         }
-        FileConfiguration c = YamlConfiguration.loadConfiguration(Storage.getStorageFile(player));
+        File f = Storage.getStorageFile(player);
+        FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         List<String> storages = c.getStringList("Storages");
         int index = (holder.getPage() - 1) * GUI.PAGE_SIZE + raw;
         if (index >= storages.size()) {
             return;
         }
-        gui.OpenItemGui(player, storages.get(index));
+
+        if (!right) {
+            gui.OpenItemGui(player, storages.get(index));
+            return;
+        }
+
+        // 右クリック: 1つ目で選択、2つ目で入れ替え、同じアイテムで選択解除
+        if (selected < 0) {
+            gui.OpenGui(player, holder.getPage(), index);
+            return;
+        }
+        if (selected != index && selected < storages.size()) {
+            String c1 = storages.get(selected);
+            String c2 = storages.get(index);
+            storages.set(selected, c2);
+            storages.set(index, c1);
+            c.set("Storages", storages);
+            save(c, f);
+            Messages.send(player, "loc-done", "item1", c1, "item2", c2);
+        }
+        gui.OpenGui(player, holder.getPage(), -1);
     }
 
     private void clickItem(Player player, StorageHolder holder, int raw) {
@@ -270,19 +302,19 @@ public class Listeners implements Listener {
                     if (map.isEmpty()) {
                         hopper.remove(player.getUniqueId());
                     }
-                    c.set("Storage." + item, stored + buffered);
+                    c.set("Storage." + item, add(stored, buffered));
                     save(c, f);
                     Messages.send(player, "autocollect-off", "item", item);
                 }
                 break;
             case 10: {
-                int removed = removePlain(inv, material, countPlain(inv, material));
+                int removed = removePlain(inv, material, Math.min(countPlain(inv, material), Integer.MAX_VALUE - stored));
                 c.set("Storage." + item, stored + removed);
                 save(c, f);
                 break;
             }
             case 11: {
-                int removed = removePlain(inv, material, 64);
+                int removed = removePlain(inv, material, Math.min(64, Integer.MAX_VALUE - stored));
                 c.set("Storage." + item, stored + removed);
                 save(c, f);
                 break;
@@ -332,7 +364,7 @@ public class Listeners implements Listener {
         if (buffered > FLUSH_THRESHOLD) {
             File f = Storage.getStorageFile(player);
             FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-            c.set("Storage." + item, c.getInt("Storage." + item) + buffered);
+            c.set("Storage." + item, add(c.getInt("Storage." + item), buffered));
             save(c, f);
             buffered = 0;
         }

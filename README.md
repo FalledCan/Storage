@@ -6,6 +6,7 @@ A per-player virtual item storage plugin for Spigot / Paper. English description
 ## 機能
 - プレイヤーごとに最大405種類(9ページ × 45)のアイテムを登録し、個数無制限で保存
 - GUIで「すべて保存 / 1スタック保存 / 1スタック取り出し / 空き分取り出し」
+- GUIで右クリックして並び替え(ページをまたいでも可)
 - 自動回収: 拾ったアイテムを直接ストレージへ(アイテムごとにON/OFF、権限制)
 - Vault 対応(任意): アイテム登録時に費用を徴収。Vault が無ければ無料
 - 英語・日本語のメッセージ同梱。すべて編集可能
@@ -33,7 +34,7 @@ A per-player virtual item storage plugin for Spigot / Paper. English description
 - `registration-cost`: 登録費用。`0` または Vault 無しで無料
 - `max-pages`: ページ数 (1-9)
 - `auto-collect.enabled`: 自動回収機能の有効/無効
-- `blocklist`: この単語を含むアイテムは登録不可(最大スタック数64未満のアイテムは常に不可)
+- `blocklist`: 登録不可のアイテム。`*` でワイルドカード指定(例: `*_SPAWN_EGG`)、`*` 無しは完全一致。最大スタック数64未満のアイテムは常に登録不可
 
 ## 動作環境
 - Spigot / Paper 1.13 〜 26.3(最新)(Java はサーバーの要件に準拠、プラグイン自体は Java 8 以上)

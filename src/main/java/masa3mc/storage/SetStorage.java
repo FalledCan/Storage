@@ -12,8 +12,23 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class SetStorage implements CommandExecutor {
+
+    /** ブロックリストの1項目と一致するか。'*' は任意の文字列 (例: *_SPAWN_EGG) */
+    static boolean matches(String pattern, String name) {
+        StringBuilder regex = new StringBuilder();
+        String[] parts = pattern.trim().toUpperCase(Locale.ROOT).split("\\*", -1);
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0) {
+                regex.append(".*");
+            }
+            regex.append(Pattern.quote(parts[i]));
+        }
+        return name.matches(regex.toString());
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -43,7 +58,7 @@ public class SetStorage implements CommandExecutor {
         }
 
         for (String s : Storage.getPlugin().getConfig().getStringList("blocklist")) {
-            if (item.contains(s)) {
+            if (matches(s, item)) {
                 Messages.send(player, "cannot-register", "item", item);
                 return true;
             }

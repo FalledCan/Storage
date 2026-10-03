@@ -6,6 +6,7 @@ Register an item type once, then store and withdraw huge amounts of it from a ch
 ## Features
 - 📦 **Per-player storage** – up to 405 item types (9 pages × 45), unlimited amount per item
 - 🖱️ **Easy GUI** – store all / store 1 stack / take 1 stack / take as much as fits
+- 🔀 **Rearrange in GUI** – right-click two items to swap them, even across pages
 - 🧲 **Auto-collect** – picked-up items go straight into storage (toggle per item, permission based)
 - 💰 **Optional Vault support** – charge a registration cost per item type (free without Vault)
 - 🌐 **Translatable** – English and Japanese included, every message is editable
@@ -36,9 +37,9 @@ registration-cost: 30000 # 0 = free (also free when Vault is not installed)
 max-pages: 9            # 1-9, 45 items per page
 auto-collect:
   enabled: true
-blocklist:              # material names containing these words cannot be registered
-  - SHULKER_BOX
-  - ...
+blocklist:              # items that cannot be registered (* = wildcard)
+  - "*_SPAWN_EGG"
+  - BEDROCK
 ```
 Items with a max stack size below 64 (tools, armor, potions, ender pearls, …) cannot be registered.
 
