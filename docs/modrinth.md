@@ -43,8 +43,8 @@ blocklist:              # material names containing these words cannot be regist
 Items with a max stack size below 64 (tools, armor, potions, ender pearls, …) cannot be registered.
 
 ## Requirements
-- Spigot / Paper 1.20+
-- Java 17+
+- Spigot / Paper 1.13 – 26.3 (latest)
+- Java 8+ (whatever your server version requires)
 - [Vault](https://www.spigotmc.org/resources/vault.34315/) + an economy plugin (optional, only for the registration cost)
 
 ## Source & Issues

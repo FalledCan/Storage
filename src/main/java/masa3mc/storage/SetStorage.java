@@ -31,7 +31,7 @@ public class SetStorage implements CommandExecutor {
         Material material = player.getInventory().getItemInMainHand().getType();
         String item = material.name();
 
-        if (material.isAir() || !material.isItem()) {
+        if (material == Material.AIR || !material.isItem()) {
             Messages.send(player, "hold-item");
             return true;
         }

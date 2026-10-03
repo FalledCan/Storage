@@ -36,7 +36,7 @@ A per-player virtual item storage plugin for Spigot / Paper. English description
 - `blocklist`: この単語を含むアイテムは登録不可(最大スタック数64未満のアイテムは常に不可)
 
 ## 動作環境
-- Spigot / Paper 1.20 以降、Java 17 以降
+- Spigot / Paper 1.13 〜 26.3(最新)(Java はサーバーの要件に準拠、プラグイン自体は Java 8 以上)
 - Vault + 経済プラグイン(任意)
 
 ## ビルド
