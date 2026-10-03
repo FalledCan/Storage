@@ -10,7 +10,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,9 +22,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class Listeners implements Listener {
@@ -32,6 +36,35 @@ public class Listeners implements Listener {
 
     /** 自動回収の一時バッファがこの数を超えたらファイルへ書き込む */
     private static final int FLUSH_THRESHOLD = 63;
+
+    /** Storage GUIを開いているプレイヤー */
+    private static final Set<UUID> viewers = new HashSet<>();
+
+    /** sub.large は旧バージョンとの互換用 */
+    public static boolean canAutoCollect(Player player) {
+        return Storage.getPlugin().getConfig().getBoolean("auto-collect.enabled", true)
+                && (player.hasPermission("storage.autocollect") || player.hasPermission("sub.large"));
+    }
+
+    public static void closeIfStorageOpen(Player player) {
+        if (viewers.remove(player.getUniqueId())) {
+            player.closeInventory();
+        }
+    }
+
+    @EventHandler
+    public void onOpen(InventoryOpenEvent event) {
+        if (event.getInventory().getHolder() instanceof StorageHolder) {
+            viewers.add(event.getPlayer().getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent event) {
+        if (event.getInventory().getHolder() instanceof StorageHolder) {
+            viewers.remove(event.getPlayer().getUniqueId());
+        }
+    }
 
     public static boolean isAutoCollect(Player player, String item) {
         Map<String, Integer> map = hopper.get(player.getUniqueId());
@@ -77,14 +110,13 @@ public class Listeners implements Listener {
     public static void restoreAutoCollectState(Player player) {
         String key = player.getUniqueId().toString();
         // 権限が無い間は状態を残しておき、再度権限を得たときに復元する
-        if (reYaml.get().get(key) == null || !player.hasPermission("sub.large")) {
+        if (reYaml.get().get(key) == null || !canAutoCollect(player)) {
             return;
         }
         for (String item : reYaml.get().getStringList(key)) {
             if (!isAutoCollect(player, item)) {
                 enableAutoCollect(player, item);
-                Bukkit.getLogger().info("[Storage] " + player.getName() + "の" + item + "の自動回収がONになりました。");
-                player.sendMessage("§6[§7Storage§6] " + item + "§bの自動回収機能が§aon§bになりました。");
+                Messages.send(player, "autocollect-on", "item", item);
             }
         }
         reYaml.get().set(key, null);
@@ -222,15 +254,16 @@ public class Listeners implements Listener {
 
         switch (raw) {
             case 8:
-                if (!player.hasPermission("sub.large")) {
-                    player.sendMessage("§6[§7Storage§6] §cこの機能はメンバーシッププラン専用です。");
-                    player.sendMessage("§6[§7Storage§6] §cサブスクはこちらから: §astore.masa3mc.xyz");
+                if (!Storage.getPlugin().getConfig().getBoolean("auto-collect.enabled", true)) {
+                    return;
+                }
+                if (!canAutoCollect(player)) {
+                    Messages.send(player, "autocollect-no-permission");
                     return;
                 }
                 if (!isAutoCollect(player, item)) {
                     enableAutoCollect(player, item);
-                    Bukkit.getLogger().info("[Storage] " + player.getName() + "の" + item + "の自動回収がONになりました。");
-                    player.sendMessage("§6[§7Storage§6] " + item + "§bの自動回収機能が§aon§bになりました。");
+                    Messages.send(player, "autocollect-on", "item", item);
                 } else {
                     Map<String, Integer> map = hopper.get(player.getUniqueId());
                     int buffered = map.remove(item);
@@ -239,8 +272,7 @@ public class Listeners implements Listener {
                     }
                     c.set("Storage." + item, stored + buffered);
                     save(c, f);
-                    Bukkit.getLogger().info("[Storage] " + player.getName() + "の" + item + "の自動回収がOFFになりました。");
-                    player.sendMessage("§6[§7Storage§6] " + item + "§bの自動回収機能が§coff§bになりました。");
+                    Messages.send(player, "autocollect-off", "item", item);
                 }
                 break;
             case 10: {
@@ -291,7 +323,7 @@ public class Listeners implements Listener {
         if (!map.containsKey(item) || !isPlain(itemStack, itemStack.getType())) {
             return;
         }
-        if (!player.hasPermission("sub.large")) {
+        if (!canAutoCollect(player)) {
             return;
         }
         event.setCancelled(true);

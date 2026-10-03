@@ -15,18 +15,18 @@ public class ChangeLocation implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cこのコマンドはプレイヤーのみ実行できます。");
+            Messages.send(sender, "player-only");
             return true;
         }
         Player player = (Player) sender;
         if (!player.hasPermission("storage.open")) {
-            player.sendMessage("§6[§7Storage§6] §cあなたはstorage.openを持っていません。");
+            Messages.send(player, "no-permission", "permission", "storage.open");
             return true;
         }
 
         File f = Storage.getStorageFile(player);
         if (!f.exists()) {
-            player.sendMessage("§6[§7Storage§6] §c登録がされていないかファイルが存在しません!");
+            Messages.send(player, "not-registered");
             return true;
         }
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
@@ -41,11 +41,11 @@ public class ChangeLocation implements CommandExecutor {
             loc1 = Integer.parseInt(args[0]);
             loc2 = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage("§6[§7Storage§6] §c/" + label + " [移動元Number] [移動先Number]");
+            Messages.send(player, "loc-usage", "label", label);
             return true;
         }
         if (loc1 < 0 || loc2 < 0 || loc1 >= list.size() || loc2 >= list.size()) {
-            player.sendMessage("§6[§7Storage§6] §cNumberは0～" + (list.size() - 1) + "で指定してください。");
+            Messages.send(player, "loc-range", "max", list.size() - 1);
             return true;
         }
 
@@ -61,7 +61,7 @@ public class ChangeLocation implements CommandExecutor {
             e.printStackTrace();
         }
 
-        player.sendMessage("§6[§7Storage§6] §7" + c1 + "§6と§7" + c2 + "§6の位置の変更が完了しました。");
+        Messages.send(player, "loc-done", "item1", c1, "item2", c2);
         return true;
     }
 }

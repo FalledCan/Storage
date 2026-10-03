@@ -1,3 +1,22 @@
+# Storage configuration
+
+# Message language. Files are in plugins/Storage/lang/ (bundled: en, ja)
+language: en
+
+# Cost to register a new item. Requires Vault and an economy plugin.
+# Set to 0 (or run without Vault) to make registration free.
+registration-cost: 30000
+
+# Number of GUI pages (45 items per page, 1-9)
+max-pages: 9
+
+auto-collect:
+  # Picked-up items that are registered and toggled on go straight into Storage.
+  # Requires the storage.autocollect permission.
+  enabled: true
+
+# Items whose material name contains any of these words cannot be registered.
+# Items with a max stack size below 64 are always rejected.
 blocklist:
   - SPAWNER
   - AIR
@@ -43,6 +62,3 @@ blocklist:
   - SHEARS
   - SHIELD
   - TOTEM_OF_UNDYING
-
-
-#このブロックリストはアイテムに指定の単語が入っている場合弾かれます。

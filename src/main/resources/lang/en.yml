@@ -1,0 +1,47 @@
+# Storage - English messages
+# Color codes use '&'. {prefix} is replaced with the prefix below.
+prefix: "&6[&7Storage&6] "
+
+player-only: "&cThis command can only be used by players."
+no-permission: "{prefix}&cYou don't have permission ({permission})."
+reloaded: "{prefix}&aConfiguration reloaded."
+not-registered: "{prefix}&cYou have no registered items yet. Hold an item and use /addstorage."
+
+hold-item: "{prefix}&cHold the item you want to register in your main hand."
+cannot-register: "{prefix}&c{item} cannot be registered."
+already-registered: "{prefix}&c{item} is already registered."
+limit-reached: "{prefix}&cYou have reached the registration limit ({max})."
+not-enough-money: "{prefix}&cYou need {cost} to register an item."
+payment-failed: "{prefix}&cPayment failed."
+save-failed-refund: "{prefix}&cFailed to save, your payment has been refunded."
+registered: "{prefix}&aAdded &b{item}&a to your Storage."
+registered-paid: "{prefix}&aAdded &b{item}&a to your Storage. &7(-{cost})"
+
+loc-usage: "{prefix}&c/{label} <from> <to>"
+loc-range: "{prefix}&cNumber must be between 0 and {max}."
+loc-done: "{prefix}&6Swapped &7{item1}&6 and &7{item2}&6."
+
+item-missing: "{prefix}&c{item} does not exist in this server version."
+autocollect-on: "{prefix}&bAuto-collect for &f{item}&b is now &aON&b."
+autocollect-off: "{prefix}&bAuto-collect for &f{item}&b is now &cOFF&b."
+autocollect-no-permission: "{prefix}&cYou don't have permission to use auto-collect."
+
+gui:
+  title-main: "&6[&7Storage&6]"
+  title-item: "&6[&7Storage&6] items"
+  page: "&6[&7Storage&6] - Page {page}"
+  item-name: "&7No.{number} - &6{item}"
+  item-detail-name: "&6{item}"
+  capacity:
+    - "&7Stored:"
+    - "&7{stacks} stacks + {items} items"
+    - "&8(total {total})"
+  missing-material: "&c(This item does not exist in this version)"
+  autocollect: "&6Auto-collect"
+  autocollect-status-on: "&6Status: &aON"
+  autocollect-status-off: "&6Status: &cOFF"
+  store-all: "&6Store all"
+  store-stack: "&6Store 1 stack"
+  take-stack: "&6Take 1 stack"
+  take-all: "&6Take as much as fits in inventory"
+  back: "&cBack"

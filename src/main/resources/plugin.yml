@@ -1,16 +1,19 @@
 name: Storage
 version: ${project.version}
 main: masa3mc.storage.Storage
-api-version: 1.20
-depend: [Vault]
+api-version: '1.20'
+description: ${project.description}
+authors: [FalledCan]
+website: ${project.url}
+softdepend: [Vault]
 commands:
   storage:
-    usage: /storage [page]
-    description: Open Storage GUI
+    usage: /storage [page|reload]
+    description: Open the Storage GUI
     aliases: [st]
   addstorage:
     usage: /addstorage
-    description: Add the item in your main hand to Storage
+    description: Register the item in your main hand to Storage
     aliases: [ast]
   locstorage:
     usage: /locstorage <from> <to>
@@ -18,11 +21,25 @@ commands:
     aliases: [lst]
 permissions:
   storage.open:
-    description: Open Storage GUI and change item positions
-    default: op
+    description: Open the Storage GUI and rearrange items
+    default: true
   storage.add:
     description: Register new items to Storage
-    default: op
-  sub.large:
+    default: true
+  storage.autocollect:
     description: Use the auto-collect feature
     default: op
+  storage.free:
+    description: Register items without paying the registration cost
+    default: false
+  storage.admin:
+    description: Reload the configuration with /storage reload
+    default: op
+  storage.*:
+    description: All Storage permissions
+    default: op
+    children:
+      storage.open: true
+      storage.add: true
+      storage.autocollect: true
+      storage.admin: true
